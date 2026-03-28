@@ -1,0 +1,12 @@
+[
+  { "id": 1, "name": "Ahmad Fauzi", "nim": "2021001", "angkatan": "2021", "jurusan": "Pendidikan Agama Islam", "status": "Aktif", "photo": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face" },
+  { "id": 2, "name": "Siti Nurhaliza", "nim": "2021002", "angkatan": "2021", "jurusan": "Pendidikan Agama Islam", "status": "Aktif", "photo": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face" },
+  { "id": 3, "name": "Muhammad Rizki", "nim": "2022001", "angkatan": "2022", "jurusan": "Ekonomi Syariah", "status": "Aktif", "photo": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face" },
+  { "id": 4, "name": "Dewi Safitri", "nim": "2022002", "angkatan": "2022", "jurusan": "Hukum Keluarga Islam", "status": "Aktif", "photo": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face" },
+  { "id": 5, "name": "Hasan Basri", "nim": "2022003", "angkatan": "2022", "jurusan": "Pendidikan Agama Islam", "status": "Aktif", "photo": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face" },
+  { "id": 6, "name": "Fatimah Zahra", "nim": "2023001", "angkatan": "2023", "jurusan": "Ekonomi Syariah", "status": "Aktif", "photo": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face" },
+  { "id": 7, "name": "Ali Mukhtar", "nim": "2023002", "angkatan": "2023", "jurusan": "Hukum Keluarga Islam", "status": "Aktif", "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face" },
+  { "id": 8, "name": "Nurul Aini", "nim": "2023003", "angkatan": "2023", "jurusan": "Pendidikan Agama Islam", "status": "Aktif", "photo": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face" },
+  { "id": 9, "name": "Budi Santoso", "nim": "2021003", "angkatan": "2021", "jurusan": "Ekonomi Syariah", "status": "Alumni", "photo": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop&crop=face" },
+  { "id": 10, "name": "Aisyah Putri", "nim": "2020001", "angkatan": "2020", "jurusan": "Pendidikan Agama Islam", "status": "Alumni", "photo": "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=200&fit=crop&crop=face" }
+]

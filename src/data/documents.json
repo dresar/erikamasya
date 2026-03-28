@@ -1,0 +1,10 @@
+[
+  { "id": 1, "title": "AD/ART PMII Komisariat STAIM Kendal", "category": "Organisasi", "fileSize": "2.4 MB", "fileType": "PDF", "date": "2024-01-15" },
+  { "id": 2, "title": "Program Kerja 2024-2025", "category": "Program", "fileSize": "1.8 MB", "fileType": "PDF", "date": "2024-02-01" },
+  { "id": 3, "title": "Laporan Pertanggungjawaban 2023", "category": "Laporan", "fileSize": "3.2 MB", "fileType": "PDF", "date": "2024-01-10" },
+  { "id": 4, "title": "Panduan Kaderisasi", "category": "Kaderisasi", "fileSize": "1.5 MB", "fileType": "PDF", "date": "2023-12-20" },
+  { "id": 5, "title": "Materi Kajian Aswaja", "category": "Kajian", "fileSize": "4.1 MB", "fileType": "PDF", "date": "2024-03-01" },
+  { "id": 6, "title": "SK Kepengurusan 2024-2025", "category": "Organisasi", "fileSize": "0.8 MB", "fileType": "PDF", "date": "2024-01-20" },
+  { "id": 7, "title": "Proposal Seminar Nasional 2024", "category": "Program", "fileSize": "2.1 MB", "fileType": "DOCX", "date": "2024-02-15" },
+  { "id": 8, "title": "Laporan Keuangan Q1 2024", "category": "Laporan", "fileSize": "1.2 MB", "fileType": "XLSX", "date": "2024-04-01" }
+]

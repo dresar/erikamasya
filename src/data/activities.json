@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "Seminar Nasional Kebangsaan 2024",
+    "description": "Seminar nasional dengan tema penguatan nilai-nilai Pancasila di era digital yang menghadirkan pembicara nasional.",
+    "date": "2024-03-20",
+    "location": "Aula STAIM Kendal",
+    "category": "Seminar",
+    "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=450&fit=crop",
+    "status": "Selesai"
+  },
+  {
+    "id": 2,
+    "title": "Pelatihan Kepemimpinan Dasar (PKD)",
+    "description": "Program pelatihan kepemimpinan untuk kader baru PMII Komisariat STAIM Kendal angkatan 2024.",
+    "date": "2024-04-15",
+    "location": "Wisma PMII Kendal",
+    "category": "Pelatihan",
+    "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=450&fit=crop",
+    "status": "Akan Datang"
+  },
+  {
+    "id": 3,
+    "title": "Bakti Sosial Desa Binaan",
+    "description": "Kegiatan bakti sosial rutin di desa binaan meliputi pembagian sembako dan bimbingan belajar.",
+    "date": "2024-02-10",
+    "location": "Desa Kaliwungu, Kendal",
+    "category": "Sosial",
+    "image": "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&h=450&fit=crop",
+    "status": "Selesai"
+  },
+  {
+    "id": 4,
+    "title": "Kajian Rutin Aswaja",
+    "description": "Kajian rutin mingguan membahas pemahaman Ahlussunnah wal Jamaah dan implementasinya.",
+    "date": "2024-03-25",
+    "location": "Masjid STAIM Kendal",
+    "category": "Kajian",
+    "image": "https://images.unsplash.com/photo-1585036156171-384164a8c675?w=800&h=450&fit=crop",
+    "status": "Berlangsung"
+  },
+  {
+    "id": 5,
+    "title": "Musyawarah Komisariat",
+    "description": "Musyawarah tahunan untuk memilih kepengurusan baru periode 2024-2025.",
+    "date": "2024-01-15",
+    "location": "Aula STAIM Kendal",
+    "category": "Organisasi",
+    "image": "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&h=450&fit=crop",
+    "status": "Selesai"
+  },
+  {
+    "id": 6,
+    "title": "Workshop Jurnalistik & Media Sosial",
+    "description": "Workshop pelatihan jurnalistik dan pengelolaan media sosial untuk kader PMII.",
+    "date": "2024-05-01",
+    "location": "Lab Komputer STAIM Kendal",
+    "category": "Pelatihan",
+    "image": "https://images.unsplash.com/photo-1504711434969-e33886168d0c?w=800&h=450&fit=crop",
+    "status": "Akan Datang"
+  }
+]
