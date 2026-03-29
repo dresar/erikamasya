@@ -1,9 +1,45 @@
 import { motion } from "framer-motion";
 import { FileText, Download } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
-import documentsData from "@/data/documents.json";
+import { useEffect, useState } from "react";
 
 const Documents = () => {
+  const [documents, setDocuments] = useState<
+    Array<{ id: number; title: string; category: string; fileType: string; fileSize: string; publishedAt: string; fileUrl: string | null }>
+  >([]);
+
+  useEffect(() => {
+    fetch("/api/documents?page=1&pageSize=200")
+      .then((r) => r.json())
+      .then((p) => {
+        const list = Array.isArray(p) ? p : p?.data;
+        if (!Array.isArray(list)) return;
+        setDocuments(
+          list.map((d: unknown) => {
+            const item = d as {
+              id: number;
+              title?: string;
+              category?: string | null;
+              fileType?: string | null;
+              fileSize?: string | null;
+              publishedAt?: string | null;
+              fileUrl?: string | null;
+            };
+            return {
+              id: item.id,
+              title: item.title ?? "",
+              category: item.category ?? "",
+              fileType: item.fileType ?? "",
+              fileSize: item.fileSize ?? "",
+              publishedAt: item.publishedAt?.slice?.(0, 10) ?? "",
+              fileUrl: item.fileUrl ?? null,
+            };
+          })
+        );
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <>
       <section className="py-16 lg:py-24 bg-surface-sunken">
@@ -19,7 +55,7 @@ const Documents = () => {
       <section className="py-16 lg:py-24">
         <div className="section-container max-w-4xl">
           <div className="space-y-3">
-            {documentsData.map((doc, i) => (
+            {documents.map((doc, i) => (
               <motion.div
                 key={doc.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -40,12 +76,15 @@ const Documents = () => {
                     <span>·</span>
                     <span>{doc.fileSize}</span>
                     <span>·</span>
-                    <span>{doc.date}</span>
+                    <span>{doc.publishedAt}</span>
                   </div>
                 </div>
-                <button className="h-9 w-9 rounded-lg border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors flex-shrink-0">
+                <a
+                  href={doc.fileUrl ?? "#"}
+                  className="h-9 w-9 rounded-lg border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors flex-shrink-0"
+                >
                   <Download className="h-4 w-4" />
-                </button>
+                </a>
               </motion.div>
             ))}
           </div>

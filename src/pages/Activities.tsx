@@ -1,15 +1,50 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/SectionHeading";
 import { MapPin, Calendar } from "lucide-react";
-import activitiesData from "@/data/activities.json";
-
-const categories = ["Semua", ...new Set(activitiesData.map((a) => a.category))];
 
 const Activities = () => {
   const [filter, setFilter] = useState("Semua");
+  const [activities, setActivities] = useState<
+    Array<{ id: number; title: string; description: string; date: string; location: string; category: string; status: string; imageUrl: string | null }>
+  >([]);
 
-  const filtered = filter === "Semua" ? activitiesData : activitiesData.filter((a) => a.category === filter);
+  useEffect(() => {
+    fetch("/api/activities?page=1&pageSize=100")
+      .then((r) => r.json())
+      .then((p) => {
+        const list = Array.isArray(p) ? p : p?.data;
+        if (!Array.isArray(list)) return;
+        setActivities(
+          list.map((a: unknown) => {
+            const item = a as {
+              id: number;
+              title?: string;
+              description?: string | null;
+              date?: string | null;
+              location?: string | null;
+              category?: string | null;
+              status?: string | null;
+              imageUrl?: string | null;
+            };
+            return {
+              id: item.id,
+              title: item.title ?? "",
+              description: item.description ?? "",
+              date: item.date?.slice?.(0, 10) ?? "",
+              location: item.location ?? "",
+              category: item.category ?? "",
+              status: item.status ?? "",
+              imageUrl: item.imageUrl ?? null,
+            };
+          })
+        );
+      })
+      .catch(() => {});
+  }, []);
+
+  const categories = useMemo(() => ["Semua", ...new Set(activities.map((a) => a.category).filter(Boolean))], [activities]);
+  const filtered = useMemo(() => (filter === "Semua" ? activities : activities.filter((a) => a.category === filter)), [activities, filter]);
 
   return (
     <>
@@ -53,7 +88,7 @@ const Activities = () => {
               >
                 <div className="aspect-video overflow-hidden">
                   <img
-                    src={activity.image}
+                    src={activity.imageUrl ?? "https://via.placeholder.com/800x450"}
                     alt={activity.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"

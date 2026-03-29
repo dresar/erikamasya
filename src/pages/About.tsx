@@ -1,7 +1,22 @@
 import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/SectionHeading";
+import { useEffect, useState } from "react";
 
 const About = () => {
+  const [organizationName, setOrganizationName] = useState<string>(""); 
+  const [description, setDescription] = useState<string>("");
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((s) => {
+        if (!s) return;
+        if (typeof s.organizationName === "string") setOrganizationName(s.organizationName);
+        if (typeof s.description === "string") setDescription(s.description);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <>
       {/* Hero */}
@@ -9,8 +24,8 @@ const About = () => {
         <div className="section-container">
           <SectionHeading
             badge="Tentang Kami"
-            title="PMII Komisariat STAIM Kendal"
-            description="Organisasi pergerakan mahasiswa Islam yang berkomitmen mencetak kader-kader bangsa berkarakter Ahlussunnah wal Jamaah."
+            title={organizationName || "PMII"}
+            description={description || ""}
           />
         </div>
       </section>

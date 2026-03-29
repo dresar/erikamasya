@@ -1,5 +1,5 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import {
   LayoutDashboard, Users, FileText, Calendar, Image, Building2,
@@ -23,6 +23,12 @@ export function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) navigate("/login");
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex bg-surface-sunken">
@@ -68,6 +74,16 @@ export function AdminLayout() {
         </nav>
 
         <div className="p-4 border-t border-border">
+          <button
+            onClick={() => {
+              localStorage.removeItem("auth_token");
+              localStorage.removeItem("auth_user");
+              navigate("/login");
+            }}
+            className="w-full mb-2 flex items-center justify-center px-3 py-2 rounded-lg text-sm border border-border text-foreground hover:bg-muted transition-colors"
+          >
+            Logout
+          </button>
           <Link
             to="/"
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"

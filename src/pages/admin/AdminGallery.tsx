@@ -1,7 +1,39 @@
 import { Plus, Trash2 } from "lucide-react";
-import gallery from "@/data/gallery.json";
+import { useEffect, useState } from "react";
 
 const AdminGallery = () => {
+  const [gallery, setGallery] = useState<Array<{ id: number; title: string; category: string; image: string; date: string }>>([]);
+
+  useEffect(() => {
+    fetch("/api/gallery?page=1&pageSize=50")
+      .then((r) => r.json())
+      .then((payload) => {
+        const list = Array.isArray(payload) ? payload : payload?.data;
+        if (!Array.isArray(list)) return;
+        setGallery(
+          list.map((g: unknown) => {
+            const item = g as {
+              id: number;
+              title?: string;
+              category?: string | null;
+              imageUrl?: string | null;
+              image?: string | null;
+              date?: string | null;
+            };
+
+            return {
+              id: item.id,
+              title: item.title ?? "",
+              category: item.category ?? "",
+              image: item.imageUrl ?? item.image ?? "https://via.placeholder.com/800x600",
+              date: item.date?.slice?.(0, 10) ?? item.date ?? "",
+            };
+          })
+        );
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">

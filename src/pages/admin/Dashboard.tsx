@@ -1,35 +1,67 @@
 import { Users, FileText, Calendar, Eye, TrendingUp, MessageSquare } from "lucide-react";
-import stats from "@/data/stats.json";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
-
-const chartData = [
-  { bulan: "Jan", anggota: 12, kegiatan: 3 },
-  { bulan: "Feb", anggota: 8, kegiatan: 5 },
-  { bulan: "Mar", anggota: 15, kegiatan: 4 },
-  { bulan: "Apr", anggota: 10, kegiatan: 6 },
-  { bulan: "Mei", anggota: 7, kegiatan: 3 },
-  { bulan: "Jun", anggota: 11, kegiatan: 4 },
-];
-
-const visitData = [
-  { bulan: "Jan", pengunjung: 450 },
-  { bulan: "Feb", pengunjung: 620 },
-  { bulan: "Mar", pengunjung: 780 },
-  { bulan: "Apr", pengunjung: 920 },
-  { bulan: "Mei", pengunjung: 1050 },
-  { bulan: "Jun", pengunjung: 1240 },
-];
-
-const statCards = [
-  { label: "Total Anggota", value: stats.totalAnggota, icon: Users, change: "+12%" },
-  { label: "Kegiatan", value: stats.totalKegiatan, icon: Calendar, change: "+8%" },
-  { label: "Artikel", value: stats.totalArtikel, icon: FileText, change: "+15%" },
-  { label: "Pengunjung", value: stats.pengunjungBulanIni, icon: Eye, change: "+24%" },
-  { label: "Pesan Masuk", value: stats.pesanMasuk, icon: MessageSquare, change: "+3" },
-  { label: "Anggota Aktif", value: stats.anggotaAktif, icon: TrendingUp, change: "+5%" },
-];
+import { useEffect, useMemo, useState } from "react";
 
 const AdminDashboard = () => {
+  const [liveStats, setLiveStats] = useState({
+    totalAnggota: 0,
+    totalKegiatan: 0,
+    totalArtikel: 0,
+    pengunjungBulanIni: 0,
+    pesanMasuk: 0,
+    anggotaAktif: 0,
+  });
+  const [chartData, setChartData] = useState<Array<{ bulan: string; anggota: number; kegiatan: number }>>([]);
+  const [visitData, setVisitData] = useState<Array<{ bulan: string; pengunjung: number }>>([]);
+
+  useEffect(() => {
+    fetch("/api/dashboard/stats")
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data) return;
+        setLiveStats(data);
+      })
+      .catch(() => {});
+
+    fetch("/api/dashboard/members-activities")
+      .then((r) => r.json())
+      .then((rows) => {
+        if (!Array.isArray(rows)) return;
+        setChartData(
+          rows.map((x: unknown) => {
+            const item = x as { bulan?: string; anggota?: number; kegiatan?: number };
+            return { bulan: item.bulan ?? "", anggota: Number(item.anggota ?? 0), kegiatan: Number(item.kegiatan ?? 0) };
+          })
+        );
+      })
+      .catch(() => {});
+
+    fetch("/api/dashboard/visits")
+      .then((r) => r.json())
+      .then((rows) => {
+        if (!Array.isArray(rows)) return;
+        setVisitData(
+          rows.map((x: unknown) => {
+            const item = x as { bulan?: string; value?: number };
+            return { bulan: item.bulan ?? "", pengunjung: Number(item.value ?? 0) };
+          })
+        );
+      })
+      .catch(() => {});
+  }, []);
+
+  const statCards = useMemo(
+    () => [
+      { label: "Total Anggota", value: liveStats.totalAnggota, icon: Users, change: "+12%" },
+      { label: "Kegiatan", value: liveStats.totalKegiatan, icon: Calendar, change: "+8%" },
+      { label: "Artikel", value: liveStats.totalArtikel, icon: FileText, change: "+15%" },
+      { label: "Pengunjung", value: liveStats.pengunjungBulanIni, icon: Eye, change: "+24%" },
+      { label: "Pesan Masuk", value: liveStats.pesanMasuk, icon: MessageSquare, change: "+3" },
+      { label: "Anggota Aktif", value: liveStats.anggotaAktif, icon: TrendingUp, change: "+5%" },
+    ],
+    [liveStats]
+  );
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-foreground mb-1">Dashboard</h1>

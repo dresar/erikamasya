@@ -1,25 +1,70 @@
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
-import membersData from "@/data/members.json";
-
-const angkatanOptions = ["Semua", ...new Set(membersData.map((m) => m.angkatan))];
-const statusOptions = ["Semua", "Aktif", "Alumni"];
 
 const Members = () => {
   const [search, setSearch] = useState("");
   const [angkatan, setAngkatan] = useState("Semua");
   const [status, setStatus] = useState("Semua");
+  const [angkatanOptions, setAngkatanOptions] = useState<string[]>(["Semua"]);
+  const [statusOptions, setStatusOptions] = useState<string[]>(["Semua"]);
+  const [members, setMembers] = useState<
+    Array<{ id: number; name: string; jurusan: string; angkatan: string; status: string; photoUrl: string | null }>
+  >([]);
 
   const filtered = useMemo(() => {
-    return membersData.filter((m) => {
-      const matchSearch = m.name.toLowerCase().includes(search.toLowerCase());
-      const matchAngkatan = angkatan === "Semua" || m.angkatan === angkatan;
-      const matchStatus = status === "Semua" || m.status === status;
-      return matchSearch && matchAngkatan && matchStatus;
-    });
-  }, [search, angkatan, status]);
+    return members;
+  }, [members]);
+
+  useEffect(() => {
+    fetch("/api/members/meta")
+      .then((r) => r.json())
+      .then((m) => {
+        const a = Array.isArray(m?.angkatan) ? m.angkatan : [];
+        const s = Array.isArray(m?.status) ? m.status : [];
+        setAngkatanOptions(["Semua", ...a]);
+        setStatusOptions(["Semua", ...s]);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set("page", "1");
+    params.set("pageSize", "100");
+    if (search) params.set("q", search);
+    if (status !== "Semua") params.set("status", status);
+    if (angkatan !== "Semua") params.set("angkatan", angkatan);
+
+    fetch(`/api/members?${params.toString()}`)
+      .then((r) => r.json())
+      .then((p) => {
+        const list = Array.isArray(p) ? p : p?.data;
+        if (!Array.isArray(list)) return;
+        setMembers(
+          list.map((m: unknown) => {
+            const item = m as {
+              id: number;
+              name?: string;
+              jurusan?: string | null;
+              angkatan?: string | null;
+              status?: string | null;
+              photoUrl?: string | null;
+            };
+            return {
+              id: item.id,
+              name: item.name ?? "",
+              jurusan: item.jurusan ?? "",
+              angkatan: item.angkatan ?? "",
+              status: item.status ?? "",
+              photoUrl: item.photoUrl ?? null,
+            };
+          })
+        );
+      })
+      .catch(() => {});
+  }, [search, status, angkatan]);
 
   return (
     <>
@@ -78,7 +123,7 @@ const Members = () => {
                 className="glass-card p-4 text-center hover-lift"
               >
                 <img
-                  src={member.photo}
+                  src={member.photoUrl ?? "https://via.placeholder.com/200"}
                   alt={member.name}
                   className="h-16 w-16 rounded-full object-cover mx-auto mb-3 ring-2 ring-border"
                   loading="lazy"

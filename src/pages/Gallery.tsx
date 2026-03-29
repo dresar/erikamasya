@@ -1,16 +1,38 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
-import galleryData from "@/data/gallery.json";
-
-const categories = ["Semua", ...new Set(galleryData.map((g) => g.category))];
+type GalleryItem = { id: number; title: string; category: string; imageUrl: string; date: string };
 
 const Gallery = () => {
   const [filter, setFilter] = useState("Semua");
-  const [selected, setSelected] = useState<typeof galleryData[0] | null>(null);
+  const [gallery, setGallery] = useState<GalleryItem[]>([]);
+  const [selected, setSelected] = useState<GalleryItem | null>(null);
 
-  const filtered = filter === "Semua" ? galleryData : galleryData.filter((g) => g.category === filter);
+  useEffect(() => {
+    fetch("/api/gallery?page=1&pageSize=200")
+      .then((r) => r.json())
+      .then((p) => {
+        const list = Array.isArray(p) ? p : p?.data;
+        if (!Array.isArray(list)) return;
+        setGallery(
+          list.map((g: unknown) => {
+            const item = g as { id: number; title?: string; category?: string | null; imageUrl?: string | null; date?: string | null };
+            return {
+              id: item.id,
+              title: item.title ?? "",
+              category: item.category ?? "",
+              imageUrl: item.imageUrl ?? "https://via.placeholder.com/800x600",
+              date: item.date?.slice?.(0, 10) ?? "",
+            };
+          })
+        );
+      })
+      .catch(() => {});
+  }, []);
+
+  const categories = useMemo(() => ["Semua", ...new Set(gallery.map((g) => g.category).filter(Boolean))], [gallery]);
+  const filtered = useMemo(() => (filter === "Semua" ? gallery : gallery.filter((g) => g.category === filter)), [gallery, filter]);
 
   return (
     <>
@@ -54,7 +76,7 @@ const Gallery = () => {
                 onClick={() => setSelected(item)}
               >
                 <img
-                  src={item.image}
+                  src={item.imageUrl}
                   alt={item.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
@@ -95,7 +117,7 @@ const Gallery = () => {
                 <X className="h-6 w-6" />
               </button>
               <img
-                src={selected.image}
+                src={selected.imageUrl}
                 alt={selected.title}
                 className="w-full rounded-xl"
               />

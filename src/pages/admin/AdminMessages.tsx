@@ -1,13 +1,46 @@
 import { Mail, Eye, Trash2 } from "lucide-react";
-
-const messages = [
-  { id: 1, name: "Budi Santoso", email: "budi@gmail.com", subject: "Pendaftaran Anggota Baru", message: "Saya ingin mendaftar sebagai anggota PMII...", date: "2024-03-20", read: false },
-  { id: 2, name: "Aisyah Putri", email: "aisyah@gmail.com", subject: "Informasi Kegiatan", message: "Apakah ada kegiatan yang bisa diikuti oleh...", date: "2024-03-18", read: true },
-  { id: 3, name: "Ahmad Ridwan", email: "ahmad@gmail.com", subject: "Kerjasama", message: "Kami dari organisasi X ingin mengajak kerjasama...", date: "2024-03-15", read: true },
-  { id: 4, name: "Dewi Lestari", email: "dewi@gmail.com", subject: "Pertanyaan Umum", message: "Saya ingin bertanya tentang program kaderisasi...", date: "2024-03-12", read: false },
-];
+import { useEffect, useState } from "react";
 
 const AdminMessages = () => {
+  const [messages, setMessages] = useState<
+    Array<{ id: number; name: string; email: string; subject: string; message: string; date: string; read: boolean }>
+  >([]);
+
+  useEffect(() => {
+    fetch("/api/messages?page=1&pageSize=50")
+      .then((r) => r.json())
+      .then((payload) => {
+        const list = Array.isArray(payload) ? payload : payload?.data;
+        if (!Array.isArray(list)) return;
+        setMessages(
+          list.map((m: unknown) => {
+            const item = m as {
+              id: number;
+              name?: string;
+              email?: string;
+              subject?: string;
+              message?: string;
+              createdAt?: string | null;
+              date?: string | null;
+              isRead?: boolean | null;
+              read?: boolean | null;
+            };
+
+            return {
+              id: item.id,
+              name: item.name ?? "",
+              email: item.email ?? "",
+              subject: item.subject ?? "",
+              message: item.message ?? "",
+              date: item.createdAt?.slice?.(0, 10) ?? item.date ?? "",
+              read: item.isRead ?? item.read ?? false,
+            };
+          })
+        );
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div>
       <div className="mb-8">

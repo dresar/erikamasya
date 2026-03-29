@@ -1,7 +1,45 @@
 import { FileText, Download, Plus, Trash2 } from "lucide-react";
-import documents from "@/data/documents.json";
+import { useEffect, useState } from "react";
 
 const AdminDocuments = () => {
+  const [documents, setDocuments] = useState<
+    Array<{ id: number; title: string; category: string; fileSize: string; fileType: string; date: string; fileUrl: string }>
+  >([]);
+
+  useEffect(() => {
+    fetch("/api/documents?page=1&pageSize=50")
+      .then((r) => r.json())
+      .then((payload) => {
+        const list = Array.isArray(payload) ? payload : payload?.data;
+        if (!Array.isArray(list)) return;
+        setDocuments(
+          list.map((d: unknown) => {
+            const item = d as {
+              id: number;
+              title?: string;
+              category?: string | null;
+              fileSize?: string | null;
+              fileType?: string | null;
+              publishedAt?: string | null;
+              date?: string | null;
+              fileUrl?: string | null;
+            };
+
+            return {
+              id: item.id,
+              title: item.title ?? "",
+              category: item.category ?? "",
+              fileSize: item.fileSize ?? "",
+              fileType: item.fileType ?? "",
+              date: item.publishedAt?.slice?.(0, 10) ?? item.date ?? "",
+              fileUrl: item.fileUrl ?? "",
+            };
+          })
+        );
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">

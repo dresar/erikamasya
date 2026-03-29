@@ -2,8 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Users, Calendar, BookOpen } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
-import articles from "@/data/articles.json";
-import activities from "@/data/activities.json";
+import { useEffect, useState } from "react";
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -13,8 +12,91 @@ const fadeUp = {
 };
 
 const Index = () => {
-  const recentArticles = articles.slice(0, 3);
-  const recentActivities = activities.slice(0, 3);
+  const [recentArticles, setRecentArticles] = useState<
+    Array<{ id: number; slug: string; title: string; excerpt: string; category: string; readTime: string; thumbnailUrl: string | null }>
+  >([]);
+  const [recentActivities, setRecentActivities] = useState<
+    Array<{ id: number; title: string; description: string; category: string; date: string; imageUrl: string | null }>
+  >([]);
+  const [stats, setStats] = useState<{
+    anggotaAktif: number;
+    totalKegiatan: number;
+    totalArtikel: number;
+    totalAlumni: number;
+  } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/dashboard/stats")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d) return;
+        setStats({
+          anggotaAktif: Number(d.anggotaAktif ?? 0),
+          totalKegiatan: Number(d.totalKegiatan ?? 0),
+          totalArtikel: Number(d.totalArtikel ?? 0),
+          totalAlumni: Number(d.totalAlumni ?? 0),
+        });
+      })
+      .catch(() => {});
+
+    fetch("/api/activities?page=1&pageSize=3")
+      .then((r) => r.json())
+      .then((p) => {
+        const list = Array.isArray(p) ? p : p?.data;
+        if (!Array.isArray(list)) return;
+        setRecentActivities(
+          list.map((a: unknown) => {
+            const item = a as {
+              id: number;
+              title?: string;
+              description?: string | null;
+              category?: string | null;
+              date?: string | null;
+              imageUrl?: string | null;
+            };
+            return {
+              id: item.id,
+              title: item.title ?? "",
+              description: item.description ?? "",
+              category: item.category ?? "",
+              date: item.date?.slice?.(0, 10) ?? "",
+              imageUrl: item.imageUrl ?? null,
+            };
+          })
+        );
+      })
+      .catch(() => {});
+
+    fetch("/api/articles?page=1&pageSize=3")
+      .then((r) => r.json())
+      .then((p) => {
+        const list = Array.isArray(p) ? p : p?.data;
+        if (!Array.isArray(list)) return;
+        setRecentArticles(
+          list.map((a: unknown) => {
+            const item = a as {
+              id: number;
+              slug?: string;
+              title?: string;
+              excerpt?: string | null;
+              category?: string | null;
+              readTime?: string | null;
+              thumbnailUrl?: string | null;
+            };
+            return {
+              id: item.id,
+              slug: item.slug ?? "",
+              title: item.title ?? "",
+              excerpt: item.excerpt ?? "",
+              category: item.category ?? "",
+              readTime: item.readTime ?? "",
+              thumbnailUrl: item.thumbnailUrl ?? null,
+            };
+          })
+        );
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <>
@@ -65,10 +147,10 @@ const Index = () => {
             className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4"
           >
             {[
-              { icon: Users, value: "150+", label: "Anggota Aktif" },
-              { icon: Calendar, value: "48+", label: "Kegiatan" },
-              { icon: BookOpen, value: "32+", label: "Artikel" },
-              { icon: Users, value: "67+", label: "Alumni" },
+              { icon: Users, value: stats ? String(stats.anggotaAktif) : "-", label: "Anggota Aktif" },
+              { icon: Calendar, value: stats ? String(stats.totalKegiatan) : "-", label: "Kegiatan" },
+              { icon: BookOpen, value: stats ? String(stats.totalArtikel) : "-", label: "Artikel" },
+              { icon: Users, value: stats ? String(stats.totalAlumni) : "-", label: "Alumni" },
             ].map((stat, i) => (
               <div
                 key={i}
@@ -129,7 +211,7 @@ const Index = () => {
               >
                 <div className="aspect-video overflow-hidden">
                   <img
-                    src={activity.image}
+                    src={activity.imageUrl ?? "https://via.placeholder.com/800x450"}
                     alt={activity.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
@@ -179,7 +261,7 @@ const Index = () => {
                 <Link to={`/blog/${article.slug}`} className="glass-card overflow-hidden hover-lift group block">
                   <div className="aspect-video overflow-hidden">
                     <img
-                      src={article.thumbnail}
+                      src={article.thumbnailUrl ?? "https://via.placeholder.com/800x450"}
                       alt={article.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"

@@ -1,7 +1,49 @@
 import { Plus, Edit, Trash2, Calendar, MapPin } from "lucide-react";
-import activities from "@/data/activities.json";
+import { useEffect, useState } from "react";
 
 const AdminActivities = () => {
+  const [activities, setActivities] = useState<
+    Array<{ id: number; title: string; description: string; date: string; image: string; status: string; location: string }>
+  >([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetch('/api/activities')
+      .then(res => res.json())
+      .then(payload => {
+        const data = Array.isArray(payload) ? payload : payload?.data;
+        if (Array.isArray(data) && data.length > 0) {
+          // map to existing format
+          setActivities(
+            data.map((d: unknown) => {
+              const item = d as {
+                id: number;
+                title?: string;
+                description?: string | null;
+                date?: string | null;
+                imageUrl?: string | null;
+                status?: string | null;
+                location?: string | null;
+              };
+
+              return {
+                id: item.id,
+                title: item.title ?? "",
+                description: item.description ?? "",
+                date: item.date ?? "",
+                image: item.imageUrl ?? "https://via.placeholder.com/150",
+                status: item.status ?? "",
+                location: item.location ?? "",
+              };
+            })
+          );
+        }
+      })
+      .catch(err => console.error("API error, fallback to static", err))
+      .finally(() => setIsLoading(false));
+  }, []);
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
